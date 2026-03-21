@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 # Load trained model
-model = YOLO("best.pt")
+model = YOLO("best1.pt")
 
 # Predict on another dataset folder
 results = model.predict(

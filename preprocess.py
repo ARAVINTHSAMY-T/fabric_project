@@ -1,6 +1,5 @@
 import argparse
 import os
-
 import cv2
 from ultralytics import YOLO
 
@@ -26,6 +25,21 @@ def preprocess_image(img: cv2.Mat) -> cv2.Mat:
 
     median = cv2.medianBlur(sharpened, 3)
     denoised = cv2.bilateralFilter(median, d=9, sigmaColor=75, sigmaSpace=75)
+    return denoised
+
+
+def preprocess_image_light(img: cv2.Mat) -> cv2.Mat:
+    """Lightweight preprocessing for live camera feed - much faster."""
+    # Apply only CLAHE for contrast enhancement
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    l = clahe.apply(l)
+    lab = cv2.merge((l, a, b))
+    enhanced = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+    
+    # Light denoise without heavy blur
+    denoised = cv2.bilateralFilter(enhanced, d=5, sigmaColor=50, sigmaSpace=50)
     return denoised
 
 
@@ -69,6 +83,7 @@ def run_detection(model_path: str, image_path: str, patch_size: int) -> None:
 
 def run_webcam_detection(model_path: str, camera_index: int, conf: float) -> None:
     model = YOLO(model_path)
+    print(f"[INFO] Model classes: {model.names}")
     cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
         raise RuntimeError(
