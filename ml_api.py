@@ -87,6 +87,9 @@ async def predict(file: UploadFile = File(...)) -> PredictionResponse:
 
     defects: list[PredictionItem] = []
     for result in results:
+        if result.boxes is None:
+            continue
+
         for box in result.boxes:
             cls_id = int(box.cls.item())
             confidence = float(box.conf.item())

@@ -89,7 +89,7 @@ def main() -> None:
     args = parse_args()
 
     # Load trained YOLO model
-    model = YOLO("best1.pt")
+    model = YOLO("best.pt")
     print(f"[INFO] Model classes: {model.names}")
 
     # Auto-detect working camera (USB or built-in) unless manually set.

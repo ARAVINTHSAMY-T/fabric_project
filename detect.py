@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-model = YOLO("best1.pt")
+model = YOLO("best.pt")
 
 # Detect on test images
 results = model.predict(
